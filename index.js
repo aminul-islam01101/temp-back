@@ -13,7 +13,7 @@ const MongoStore = require('connect-mongo');
 const { mongoDB } = require('./configs/db');
 const {connectDataBase} = require('./configs/db');
 const routes = require('./routes/routes');
-// require('./configs/passport');
+require('./configs/passport');
 
 
 // app.use(
