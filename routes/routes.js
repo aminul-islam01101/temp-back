@@ -4,7 +4,7 @@ const authRouter = require('./auth.route');
 const startupRouter = require('./startup.route');
 const jobRouter = require('./job.route');
 const remoforceRouter = require('./remoforce.route');
-// const googleRouter = require('./google.route');
+const googleRouter = require('./google.route');
 const googleRoute = require('./google.route');
 
 const router = express.Router();
