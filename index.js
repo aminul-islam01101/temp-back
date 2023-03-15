@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const colors = require('colors');
 const http = require('http');
-const passportSetup = require("./passport");
+const passportSetup = require("./configs/passport.google");
 const passport = require("passport");
 const logger = require('./middleware/logger');
 
