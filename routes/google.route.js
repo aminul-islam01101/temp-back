@@ -1,52 +1,112 @@
-const passport = require('passport');
-const express = require('express');
-const {
-    register,
-    login,
-    user,
-    googleCallback,
-    googleLoginSuccess,
-} = require('../controllers/auth.controller');
+const router = require("express").Router();
+const jwt = require('jsonwebtoken');
+const User = require('../models/user.schema');
 
-const router = express.Router();
-const CLIENT_URL = 'http://localhost:3000/';
+const passport = require("passport");
+// const googleCallback =require('../controllers/auth.controller')
 
+const CLIENT_URL = "http://localhost:3000";
 
-
-// router.get('/login/success', googleLoginSuccess);
-router.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect(CLIENT_URL);
-});
-const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    // res.redirect('/api/auth/google');
-    next()
-};
-
-router.get("/login/success", isAuthenticated, (req, res) => {
+router.get("/login/success", async(req, res) => {
+  console.log(req.user);
+  
+ 
+  if (req.user) {
+    const email = req.user.email;
     console.log(req.user);
     
-    if (req.user) {
-      res.status(200).json({
-        success: true,
-        message: "successfull",
-        user: req.user,
-        //   cookies: req.cookies
-      });
-    }
+    const userExist = await User.findOne({ email });
+    const payload = {
+      email: req.user.email,
+      id: req.user._id,
+  };
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2d' }); // AuthService.issueToken(req.user._id);
+   return res.status(200).json({
+      success: true,
+      message: "successfull",
+      user: req.user,
+      token: `Bearer ${token}`,
+      role: userExist?.role,
+      //   cookies: req.cookies
+    });
+  }
+  res.send({
+    success: false,
+    message: "unauthorized",
+ 
+    //   cookies: req.cookies
   });
+});
+// router.get("/login/success", (req, res) => {
+//   if (req.user) {
+//     res.status(200).json({
+//       success: true,
+//       message: "successfull",
+//       user: req.user,
+//       //   cookies: req.cookies
+//     });
+//   }
+// });
 
-// Google Authentication Route
-router.get('/google', passport.authenticate('google', { scope: ['profile','email'] }));
 
-// Google Authentication Callback Route
+router.get("/login/failed", (req, res) => {
+  res.status(401).json({
+    success: false,
+    message: "failure",
+  });
+});
+
+
+router.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect(CLIENT_URL);
+});
+
+router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }));
+
 router.get(
-    '/google/callback',
-    passport.authenticate('google', { session: false, failureRedirect: '/login' }),
-    googleCallback
+  "/google/callback",
+  passport.authenticate("google", {
+    
+    // successRedirect: CLIENT_URL,
+    failureRedirect: "/login/failed",
+  }),
+  (req, res) => {
+  //   const payload = {
+  //     email: req.user.email,
+  //     id: req.user._id,
+  // };
+  // const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2d' });
+  //   res.cookie('token', `Bearer ${token}`, { secure: true, sameSite: 'none' });
+  // res.cookie('userRole', req.user.role, { secure: true, sameSite: 'none' });
+      if (req.user.role === 'startup') {
+          res.redirect(`${process.env.REMOFRONT}/dashboard`);
+          return;
+      }
+      if (req.user.role === 'remoforce') {
+          res.redirect(`${CLIENT_URL}/remoforce-dashboard`);
+          
+      }}
 );
 
-module.exports = router;
+// router.get("/github", passport.authenticate("github", { scope: ["profile"] }));
+
+// router.get(
+//   "/github/callback",
+//   passport.authenticate("github", {
+//     successRedirect: CLIENT_URL,
+//     failureRedirect: "/login/failed",
+//   })
+// );
+
+// router.get("/facebook", passport.authenticate("facebook", { scope: ["profile"] }));
+
+// router.get(
+//   "/facebook/callback",
+//   passport.authenticate("facebook", {
+//     successRedirect: CLIENT_URL,
+//     failureRedirect: "/login/failed",
+//   })
+// );
+
+module.exports = router
