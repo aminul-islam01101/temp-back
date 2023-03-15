@@ -14,6 +14,7 @@ const { mongoDB } = require('./configs/db');
 const {connectDataBase} = require('./configs/db');
 const routes = require('./routes/routes');
 require('./configs/passport');
+require('dotenv').config();
 
 
 // app.use(
@@ -42,7 +43,7 @@ app.use(passport.session());
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
     
