@@ -81,15 +81,15 @@ router.get(
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2d' });
     res.cookie('token', `Bearer ${token}`, {  sameSite: 'none' });
   res.cookie('userRole', req.user.role, {   sameSite: 'none' });
-  // res.redirect(CLIENT_URL)
-      if (req.user.role === 'startup') {
-          res.redirect(`${process.env.REMOFRONT}/dashboard`);
-          return;
-      }
-      if (req.user.role === 'remoforce') {
-          res.redirect(`${CLIENT_URL}/remoforce-dashboard`);
+  res.redirect(CLIENT_URL)
+      // if (req.user.role === 'startup') {
+      //     res.redirect(`${process.env.REMOFRONT}/dashboard`);
+      //     return;
+      // }
+      // if (req.user.role === 'remoforce') {
+      //     res.redirect(`${CLIENT_URL}/remoforce-dashboard`);
           
-      }
+      // }
 })
 
 // router.get("/github", passport.authenticate("github", { scope: ["profile"] }));
