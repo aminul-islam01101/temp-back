@@ -1,11 +1,13 @@
 const router = require("express").Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.schema');
+require('dotenv').config();
 
 const passport = require("passport");
 // const googleCallback =require('../controllers/auth.controller')
 
-const CLIENT_URL = "http://localhost:3000";
+const CLIENT_URL = process.env.CLIENT;
+// const CLIENT_URL = "http://localhost:3000";
 
 router.get("/login/success", async(req, res) => {
   console.log(req.user);
