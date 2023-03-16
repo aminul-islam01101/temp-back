@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const colors = require('colors');
 const http = require('http');
-const passportSetup = require("./configs/passport.google");
+
 const passport = require("passport");
 const logger = require('./middleware/logger');
 
@@ -21,27 +21,6 @@ require('dotenv').config();
 //   cookieSession({ name: "session", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
 // );
 app.use(
-  session({
-    secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: true,
-
-    store: MongoStore.create({
-      mongoUrl: mongoDB,
-      collectionName: "sessions",
-    }),
-    cookie : {
-      maxAge: 2419200000
-    }
-    // cookie: { secure: true },
-  })
-);
-app.use([express.json(), express.urlencoded({ extended: true }), logger]);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use(
   cors({
     origin: process.env.CLIENT,
     methods: "GET,POST,PUT,DELETE",
@@ -49,6 +28,33 @@ app.use(
     
   })
 );
+app.use([express.json(), express.urlencoded({ extended: true }), logger]);
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: true,
+    saveUninitialized: true,
+
+    store: MongoStore.create({
+      mongoUrl: mongoDB,
+      collectionName: "sessions",
+    }),
+    cookie : {
+      maxAge: 2419200000,
+      secure: true ,
+      sameSite: "none",
+    }
+    // cookie: { secure: true },
+  })
+);
+app.set("trust proxy", 1);
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+require("./configs/passport.google");
 
 app.use(routes);
 

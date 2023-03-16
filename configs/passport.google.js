@@ -19,6 +19,23 @@ const RemoForce = require('../models/remoForce.schema');
 console.log(process.env.GOOGLE_CALLBACK);
 
 
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+// passport.deserializeUser((user, done) => {
+//   done(null, user);
+// });
+passport.deserializeUser((id, done) => {
+
+  User.findById(id, (err, user) => {
+    // Whatever we return goes to the client and binds to the req.user property
+    return done(null, user);
+  })
+})
+
+
+
 passport.use(
   new GoogleStrategy(
     {
@@ -36,7 +53,7 @@ passport.use(
       try {
           // Check if user already exists in the database
           const existingUser = await User.findOne({ email });
-          console.log('new hello1');
+        
           if (existingUser) {
               return done(null, existingUser);
           }
@@ -75,11 +92,3 @@ passport.use(
 );
 
 
-
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
