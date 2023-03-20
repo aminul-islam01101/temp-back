@@ -23,13 +23,7 @@ const removeFiles = (files) => {
 const updateRemoProfileSettings = async (req, res) => {
     const obj = JSON.parse(req.body.obj);
     const { email } = obj;
-    const remoforceProfilePhoto = req.files.remoforceProfilePhoto[0];
-    const resume = req.files.resume[0];
 
-    console.log(email, remoforceProfilePhoto,resume);
-    
-
- 
     // console.log(homePageImages);
     // const uploadedFilesUrls = [];
 
@@ -38,19 +32,17 @@ const updateRemoProfileSettings = async (req, res) => {
         console.log(url);
 
         obj.remoforceProfilePhoto = url;
-
     }
     if (req.files.resume.length) {
         const url = await backBlazeSingle(req.files.resume[0]);
         console.log(url);
 
         obj.resume = url;
-
     }
-   
-// console.log(obj);
 
-// res.send('route ok')
+    // console.log(obj);
+
+    // res.send('route ok')
 
     try {
         if (email) {
@@ -65,6 +57,105 @@ const updateRemoProfileSettings = async (req, res) => {
         res.status(500).send({
             message: error.message,
         });
+    }
+};
+const updateRemoSkillsSettings = async (req, res) => {
+    // const obj = JSON.parse(req.body.obj);
+    const { email } = req.body;
+
+    const obj = req.body;
+    console.log(obj);
+    
+
+    //  res.send('route ok')
+
+    try {
+        if (email) {
+            const response = await Remoforce.updateOne({ email }, obj, { upsert: true });
+            res.status(200).send(response);
+        } else {
+            // fs.unlinkSync(req.file.path);
+            res.status(404).send({ message: 'something' });
+        }
+    } catch (error) {
+        // fs.unlinkSync(req.file.path);
+        res.status(500).send({
+            message: error.message,
+        });
+    }
+};
+const updateRemoEducationSettings = async (req, res) => {
+    // const obj = JSON.parse(req.body.obj);
+    const { email } = req.body;
+
+    const obj = req.body;
+
+    //  res.send('route ok')
+
+    try {
+        if (email) {
+            const response = await Remoforce.updateOne({ email }, obj, { upsert: true });
+            res.status(200).send(response);
+        } else {
+            // fs.unlinkSync(req.file.path);
+            res.status(404).send({ message: 'something' });
+        }
+    } catch (error) {
+        // fs.unlinkSync(req.file.path);
+        res.status(500).send({
+            message: error.message,
+        });
+    }
+};
+const updateRemoExperienceSettings = async (req, res) => {
+    // const obj = JSON.parse(req.body.obj);
+    const { email } = req.body;
+
+    const obj = req.body;
+
+    //  res.send('route ok')
+    console.log(email, obj);
+
+    try {
+        if (email) {
+            const response = await Remoforce.updateOne({ email }, obj, { upsert: true });
+            res.status(200).send(response);
+        } else {
+            // fs.unlinkSync(req.file.path);
+            res.status(404).send({ message: 'something' });
+        }
+    } catch (error) {
+        // fs.unlinkSync(req.file.path);
+        res.status(500).send({
+            message: error.message,
+        });
+    }
+};
+const updateRemoAccountSettings = async (req, res) => {
+    const { email, alternativeEmail } = req.body;
+
+    try {
+        const updatedUser = await Remoforce.updateOne(
+            { email },
+            { $set: { 'personalDetails.alternativeEmail': alternativeEmail } },
+            { upsert: true }
+        );
+
+        console.log(updatedUser);
+        res.send(updatedUser);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal server error');
+    }
+};
+
+const getRemoforceProfile = async (req, res) => {
+    const { email } = req.params;
+    try {
+        const userExist = await Remoforce.findOne({ email });
+        res.send(userExist);
+    } catch (error) {
+        res.status(500).send(error.message);
     }
 };
 // const updateGeneralSettingsPersonal = async (req, res) => {
@@ -236,4 +327,9 @@ const updateRemoProfileSettings = async (req, res) => {
 
 module.exports = {
     updateRemoProfileSettings,
+    updateRemoSkillsSettings,
+    updateRemoEducationSettings,
+    updateRemoExperienceSettings,
+    getRemoforceProfile,
+    updateRemoAccountSettings,
 };

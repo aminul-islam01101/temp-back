@@ -38,7 +38,7 @@ const remoforceSchema = mongoose.Schema({
         },
         trim: true,
     },
-    // update profile settings
+    // update profile settings---------------------
 
     personalDetails: {
         bio: {
@@ -89,6 +89,67 @@ const remoforceSchema = mongoose.Schema({
         type: String,
     },
 
+    // skill and job preference---------------------
+    selectedSkills: [
+        {
+            skillName: String,
+
+            level: {
+                type: String,
+
+                enum: ['Beginner', 'Intermediate', 'Professional'],
+            },
+        },
+    ],
+    selectedLanguages: [
+        {
+            language: String,
+
+            languageLevel: {
+                type: String,
+
+                enum: ['Native Language', 'Advance', 'Intermediate'],
+            },
+        },
+    ],
+    jobPreference: {
+        jobType: {
+            type: String,
+
+            enum: ['Shadowing', 'Public Job', 'Private Job', 'Internship', 'Gigs', 'Contract'],
+        },
+        jobIndustry: String,
+        jobLevel: {
+            type: String,
+
+            enum: ['Beginner', 'Intermediate', 'Advance', 'Professional'],
+        },
+        locationPreference: {
+            type: String,
+
+            enum: ['Work from Home', 'Remote', 'Hybrid', 'Full Time'],
+        },
+    },
+    // education settings---------------
+
+    educationDetails: [
+        {
+            school: String,
+            fieldOfStudy: String,
+            startingDate: Date,
+            endingDate: Date,
+        },
+    ],
+    // experience settings---------------
+    experienceDetails: [
+        {
+          companyName: { type: String, },
+          position: { type: String,  },
+          startingDate: { type: Date,  },
+          endingDate: { type: Date, },
+          type: { type: String,  },
+        },
+      ],
     createdOn: {
         type: Date,
         default: Date.now,
