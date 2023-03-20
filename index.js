@@ -31,6 +31,7 @@ app.use(
 app.use([express.json(), express.urlencoded({ extended: true }), logger]);
 app.use(
   session({
+    secret:'cat',
     resave: true,
     saveUninitialized: true,
     saveUninitialized: true,
